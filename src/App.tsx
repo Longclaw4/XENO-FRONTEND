@@ -10,6 +10,11 @@ import AIAssistant from './components/AIAssistant';
 import RatingsDashboard from './components/RatingsDashboard';
 import { Shield, Bot, Zap, CheckCircle, XCircle, Info } from 'lucide-react';
 
+// Set Axios baseURL if VITE_API_URL environment variable is provided
+if ((import.meta as any).env.VITE_API_URL) {
+  axios.defaults.baseURL = (import.meta as any).env.VITE_API_URL;
+}
+
 // Configure Axios global brand interceptor
 axios.interceptors.request.use((config) => {
   const brand = localStorage.getItem('xeno_current_brand') || 'starbucks';
@@ -88,7 +93,7 @@ const App: React.FC = () => {
 
     console.log(`[SSE] Connecting to live metrics stream for brand: ${currentBrand}...`);
     setLogs([]); // clear logs for clean tenant switching
-    const eventSource = new EventSource(`/api/live-metrics?brand=${currentBrand.toLowerCase()}`);
+    const eventSource = new EventSource(`${(import.meta as any).env.VITE_API_URL || ''}/api/live-metrics?brand=${currentBrand.toLowerCase()}`);
 
     eventSource.onmessage = (event) => {
       try {
